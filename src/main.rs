@@ -1,9 +1,10 @@
-use anyhow::Context;
 use argparse::CliOpts;
 
 mod argparse;
 mod media;
+mod media_extraction;
 mod reddit;
+mod bot;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -23,50 +24,10 @@ async fn main() -> anyhow::Result<()> {
 
 async fn run(args: &CliOpts) -> anyhow::Result<()> {
     match &args.subcmd {
-        argparse::SubCommand::ExtractMediaUrl(opts) => fetch_url(opts).await,
-        argparse::SubCommand::Test(opts) => scratch(opts),
+        argparse::SubCommand::ExtractMediaUrl(opts) => media_extraction::fetch_url(opts).await,
+        argparse::SubCommand::Test(opts) => media_extraction::check_saved_responses(opts),
+        argparse::SubCommand::Bot(opts) => bot::bot_start().await,
     }
-}
-
-fn scratch(opts: &argparse::Test) -> anyhow::Result<()> {
-    log::info!("scratch");
-    {
-        use std::fs;
-        for entry in fs::read_dir(&opts.file)? {
-            let entry = entry?;
-            log::info!("begin {:?}", entry.path());
-            let f = fs::File::open(&entry.path())?;
-            let resp: anyhow::Result<reddit::ApiResponse> =
-                serde_json::from_reader(f).context("deserialize api response");
-            match resp {
-                Ok(r) => {
-                    let post = reddit::get_post_from_response(&r);
-                    log::info!("{:#?}", post);
-                    if let Ok(p) = post {
-                        let media = reddit::scan_for_media(p);
-                        log::info!("Media: {:#?}", media);
-                    }
-                }
-                Err(e) => {
-                    log::warn!("{:#?}", e);
-                }
-            }
-        }
-    }
-    Ok(())
-}
-
-async fn fetch_url(opts: &argparse::ExtractMediaUrl) -> anyhow::Result<()> {
-    let client = reddit::RedditClient;
-    let resp = client.get_info(&opts.url).await?;
-    let post = reddit::get_post_from_response(&resp)?;
-    log::debug!("{:#?}", post);
-    let media = reddit::scan_for_media(post)?;
-    match media {
-        Some(m) => println!("{}", m.url),
-        None => log::warn!("could not find media"),
-    }
-    Ok(())
 }
 
 pub fn setup_logger(level: u8) {
@@ -82,6 +43,8 @@ pub fn setup_logger(level: u8) {
         "rusoto_core",
         "want",
         "tantivy",
+        "tracing::span",
+        "serenity::http::client",
     ];
 
     let log_level = match level {
@@ -94,7 +57,7 @@ pub fn setup_logger(level: u8) {
 
     if level > 1 && level < 4 {
         for module in noisy_modules {
-            builder.filter_module(module, log::LevelFilter::Info);
+            builder.filter_module(module, log::LevelFilter::Warn);
         }
     }
 
