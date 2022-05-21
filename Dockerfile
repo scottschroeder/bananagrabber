@@ -22,6 +22,11 @@ RUN cargo build --release
 # our final base
 FROM debian:buster-slim
 
+RUN \
+  apt-get update && \
+  apt-get install -y ca-certificates && \
+  apt-get clean
+
 # copy the build artifact from the build stage
 COPY --from=build /bananagrabber/target/release/bananagrabber .
 
