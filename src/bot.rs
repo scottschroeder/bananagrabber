@@ -82,9 +82,13 @@ impl EventHandler for Handler {
                         match crate::media_extraction::fetch_url_through_cross_posts(s).await {
                             Ok(u) => match u {
                                 Some(m) => m,
-                                None => "could not find media".to_string(),
+                                // None => "could not find media".to_string(),
+                                None => s.clone(),
                             },
-                            Err(e) => format!("error while looking up url: {}", e),
+                            Err(e) => {
+                                log::error!("error while looking up url: {}", e);
+                                s.clone()
+                            }
                         }
                     } else {
                         "please provide a url".to_string()
