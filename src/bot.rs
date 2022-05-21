@@ -79,7 +79,7 @@ impl EventHandler for Handler {
                         .expect("Expected user object");
 
                     if let ApplicationCommandInteractionDataOptionValue::String(s) = options {
-                        match crate::media_extraction::fetch_url_str(&s).await {
+                        match crate::media_extraction::fetch_url_through_cross_posts(s).await {
                             Ok(u) => match u {
                                 Some(m) => m,
                                 None => "could not find media".to_string(),

@@ -16,6 +16,7 @@ pub struct CliOpts {
 #[derive(Parser, Debug)]
 pub enum SubCommand {
     ExtractMediaUrl(ExtractMediaUrl),
+    FetchTestCase(FetchTestCase),
     Bot(BotSettings),
     Test(Test),
 }
@@ -27,8 +28,13 @@ pub struct ExtractMediaUrl {
 }
 
 #[derive(Parser, Debug)]
-pub struct BotSettings {
+pub struct FetchTestCase {
+    /// url to the reddit post
+    pub url: String,
 }
+
+#[derive(Parser, Debug)]
+pub struct BotSettings {}
 
 #[derive(Parser, Debug)]
 pub struct Test {

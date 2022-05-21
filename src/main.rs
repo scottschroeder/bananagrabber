@@ -1,10 +1,10 @@
 use argparse::CliOpts;
 
 mod argparse;
+mod bot;
 mod media;
 mod media_extraction;
 mod reddit;
-mod bot;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -25,6 +25,7 @@ async fn main() -> anyhow::Result<()> {
 async fn run(args: &CliOpts) -> anyhow::Result<()> {
     match &args.subcmd {
         argparse::SubCommand::ExtractMediaUrl(opts) => media_extraction::fetch_url(opts).await,
+        argparse::SubCommand::FetchTestCase(opts) => media_extraction::save_url(opts).await,
         argparse::SubCommand::Test(opts) => media_extraction::check_saved_responses(opts),
         argparse::SubCommand::Bot(opts) => bot::bot_start().await,
     }
