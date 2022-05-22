@@ -1,4 +1,6 @@
-FROM rust:latest as build
+ARG REGISTRY=docker.io
+FROM ${REGISTRY}/rust:latest as build
+ARG REGISTRY
 
 # create a new empty shell project
 RUN USER=root cargo new --bin bananagrabber
@@ -20,7 +22,7 @@ RUN rm ./target/release/deps/bananagrabber*
 RUN cargo build --release
 
 # our final base
-FROM debian:buster-slim
+FROM ${REGISTRY}/debian:buster-slim
 
 RUN \
   apt-get update && \
