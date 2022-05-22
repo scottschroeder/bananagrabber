@@ -11,6 +11,8 @@ phases:
       - echo Build started on `date`
       - echo Building the Docker image for ${CODEBUILD_SOURCE_VERSION}
       - echo ${CODEBUILD_SOURCE_VERSION} > version.txt
+      - env
+      - exit 1
       - echo $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION > target
       - docker build --cache-from $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG --build-arg REGISTRY=public.ecr.aws/docker/library -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
