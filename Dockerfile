@@ -31,4 +31,4 @@ RUN \
 COPY --from=build /bananagrabber/target/release/bananagrabber .
 
 # set the startup command to run your binary
-CMD ["./bananagrabber"]
+CMD ["./bananagrabber", "bot"]
