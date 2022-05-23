@@ -14,7 +14,9 @@ phases:
       - BUILDSPEC_IMAGE="$IMAGE_REPO_NAME:$IMAGE_TAG"
       - echo Building the Docker image for $VERSIONED_IMAGE
       - echo ${CODEBUILD_RESOLVED_SOURCE_VERSION} > version.txt
-      - echo $REGISTRY/$VERSIONED_IMAGE > target
+      - echo $VERSIONED_IMAGE > target
+      - echo $AWS_DEFAULT_REGION > ECR_REGION
+      - echo $REGISTRY > ECR_REGISTRY
       - docker build --build-arg REGISTRY=public.ecr.aws/docker/library -t $BUILDSPEC_IMAGE .
       - docker tag $BUILDSPEC_IMAGE $REGISTRY/$BUILDSPEC_IMAGE
       - docker tag $BUILDSPEC_IMAGE $REGISTRY/$VERSIONED_IMAGE
@@ -28,6 +30,8 @@ phases:
 artifacts:
   files:
     - 'appspec.yml'
-    - 'scripts'
+    - 'scripts/**/*'
     - 'version.txt'
     - 'target'
+    - 'ECR_REGION'
+    - 'ECR_REGISTRY'
