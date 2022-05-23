@@ -4,4 +4,4 @@ sudo amazon-linux-extras install docker
 sudo service docker start
 sudo usermod -a -G docker ec2-user
 
-aws ecr get-login-password --region "$(cat ECR_REGION)" | docker login --username AWS --password-stdin "$(cat REGISTRY)"
+aws ecr get-login-password --region "$(cat ECR_REGION)" | docker login --username AWS --password-stdin "$(cat ECR_REGISTRY)"
