@@ -1,8 +1,3 @@
 # bananagrabber
 
-breaking links
-short
-https://v.redd.it/yub5uok42jq81
-
-xpost
-https://www.reddit.com/r/nyc/comments/q03d7u/gross/
+A discord bot that will extract the media from reddit links, so that discord's natural embedded media playback works.
